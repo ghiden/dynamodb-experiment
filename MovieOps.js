@@ -67,8 +67,35 @@ function updateMovie(client, { year, title }, { rating, plot, actors }) {
   })
 }
 
+function increateMovieRating(client, { year, title }, rating) {
+  const UpdateExpression = 'set info.rating = info.rating + :val'
+
+  const params = {
+    TableName,
+    Key:{
+      year,
+      title
+    },
+    UpdateExpression,
+    ExpressionAttributeValues:{
+      ':val': rating,
+    },
+    ReturnValues:'UPDATED_NEW' // ALL_NEW
+  }
+
+  return new Promise((resolve, reject) => {
+    client.update(params, (err, data) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
+
 module.exports = {
   putMovie,
   getMovie,
   updateMovie,
+  increateMovieRating,
 }
