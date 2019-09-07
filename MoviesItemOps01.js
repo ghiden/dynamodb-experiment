@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const { putMovie } = require('./MoviesLoadData')
+const { putMovie } = require('./MovieOps')
 
 AWS.config.update({
   region: 'us-west-2',

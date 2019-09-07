@@ -1,29 +1,11 @@
-const AWS = require('aws-sdk');
-const fs = require('fs');
+const AWS = require('aws-sdk')
+const fs = require('fs')
+const { putMovie } = require('./MovieOps')
 
 AWS.config.update({
   region: 'us-west-2',
   endpoint: 'http://localhost:8000'
 });
-
-function putMovie(client, { year, title, info }) {
-  const params = {
-    TableName: 'Movies',
-    Item: {
-      year,
-      title,
-      info,
-    }
-  }
-  return new Promise((resolve, reject) => {
-    client.put(params, (err, data) => {
-      if (err) {
-        return reject(err)
-      }
-      resolve(data)
-    })
-  })
-}
 
 async function main() {
   const client = new AWS.DynamoDB.DocumentClient()
@@ -43,10 +25,4 @@ async function main() {
   }
 }
 
-if (require.main === module) {
-  main()
-}
-
-module.exports = {
-  putMovie,
-}
+main()
