@@ -93,9 +93,38 @@ function increateMovieRating(client, { year, title }, rating) {
   })
 }
 
+function removeActor(client, { year, title }, num) {
+  const UpdateExpression = 'remove info.actors[0]'
+  const ConditionExpression = 'size(info.actors) >= :num'
+
+  const params = {
+    TableName,
+    Key:{
+      year,
+      title
+    },
+    UpdateExpression,
+    ConditionExpression,
+    ExpressionAttributeValues:{
+      ':num': num,
+    },
+    ReturnValues:'UPDATED_NEW' // ALL_NEW
+  }
+
+  return new Promise((resolve, reject) => {
+    client.update(params, (err, data) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
+
 module.exports = {
   putMovie,
   getMovie,
   updateMovie,
   increateMovieRating,
+  removeActor,
 }
