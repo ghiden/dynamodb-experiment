@@ -121,10 +121,36 @@ function removeActor(client, { year, title }, num) {
   })
 }
 
+function deleteMovieWithCondition(client, { year, title }, rating) {
+  const ConditionExpression = 'info.rating > :val'
+
+  const params = {
+    TableName,
+    Key:{
+      year,
+      title
+    },
+    ConditionExpression,
+    ExpressionAttributeValues:{
+      ':val': rating,
+    },
+  }
+
+  return new Promise((resolve, reject) => {
+    client.delete(params, (err, data) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
+
 module.exports = {
   putMovie,
   getMovie,
   updateMovie,
   increateMovieRating,
   removeActor,
+  deleteMovieWithCondition,
 }
