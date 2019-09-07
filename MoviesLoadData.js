@@ -6,13 +6,13 @@ AWS.config.update({
   endpoint: 'http://localhost:8000'
 });
 
-function putMovie(client, movie) {
+function putMovie(client, { year, title, info }) {
   const params = {
     TableName: 'Movies',
     Item: {
-      'year':  movie.year,
-      'title': movie.title,
-      'info':  movie.info
+      year,
+      title,
+      info,
     }
   }
   return new Promise((resolve, reject) => {
@@ -43,4 +43,10 @@ async function main() {
   }
 }
 
-main()
+if (require.main === module) {
+  main()
+}
+
+module.exports = {
+  putMovie,
+}
