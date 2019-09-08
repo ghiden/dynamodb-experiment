@@ -170,6 +170,34 @@ function getMoviesInYear(client, year) {
   })
 }
 
+function getMoviesInYear2(client, year, letter1, letter2) {
+  const ProjectionExpression = '#yr, title, info.genres, info.actors[0]'
+  const KeyConditionExpression = '#yr = :yyyy and title between :letter1 and :letter2'
+
+  const params = {
+    TableName,
+    ProjectionExpression,
+    KeyConditionExpression,
+    ExpressionAttributeNames:{
+      '#yr': 'year'
+    },
+    ExpressionAttributeValues: {
+      ':yyyy': year,
+      ':letter1': letter1,
+      ':letter2': letter2,
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    client.query(params, function(err, data) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
+
 module.exports = {
   putMovie,
   getMovie,
@@ -178,4 +206,5 @@ module.exports = {
   removeActor,
   deleteMovieWithCondition,
   getMoviesInYear,
+  getMoviesInYear2,
 }
