@@ -198,6 +198,49 @@ function getMoviesInYear2(client, year, letter1, letter2) {
   })
 }
 
+function scanHelper(client, params) {
+  return new Promise((resolve, reject) => {
+    client.scan(params, (err, data) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
+
+async function *getMoviesInYearsBetween(client, from, to) {
+  const ProjectionExpression = '#yr, title, info.rating'
+  const FilterExpression = '#yr between :start_yr and :end_yr'
+
+  const params = {
+    TableName,
+    ProjectionExpression,
+    FilterExpression,
+    ExpressionAttributeNames:{
+      '#yr': 'year'
+    },
+    ExpressionAttributeValues: {
+      ':start_yr': from,
+      ':end_yr': to,
+    }
+  }
+
+  while (true) {
+    try {
+      const result = await scanHelper(client, params)
+      yield result.Items
+      if (typeof result.LastEvaluatedKey != 'undefined') {
+        params.ExclusiveStartKey = result.LastEvaluatedKey
+      } else {
+        return
+      }
+    } catch(err) {
+      throw err
+    }
+  }
+}
+
 module.exports = {
   putMovie,
   getMovie,
@@ -207,4 +250,5 @@ module.exports = {
   deleteMovieWithCondition,
   getMoviesInYear,
   getMoviesInYear2,
+  getMoviesInYearsBetween,
 }
