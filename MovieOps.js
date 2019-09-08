@@ -241,6 +241,31 @@ async function *getMoviesInYearsBetween(client, from, to) {
   }
 }
 
+async function countMovies(client) {
+  const params = {
+    TableName,
+    Select: 'COUNT',
+  }
+
+  let total = 0
+
+  console.log('Scanning...')
+  while (true) {
+    try {
+      const result = await scanHelper(client, params)
+      total += result.Count
+      if (result.LastEvaluatedKey) {
+        console.log('Scanning for more...')
+        params.ExclusiveStartKey = result.LastEvaluatedKey
+      } else {
+        return total
+      }
+    } catch(err) {
+      throw err
+    }
+  }
+}
+
 module.exports = {
   putMovie,
   getMovie,
@@ -251,4 +276,5 @@ module.exports = {
   getMoviesInYear,
   getMoviesInYear2,
   getMoviesInYearsBetween,
+  countMovies,
 }
