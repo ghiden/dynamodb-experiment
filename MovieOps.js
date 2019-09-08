@@ -146,6 +146,30 @@ function deleteMovieWithCondition(client, { year, title }, rating) {
   })
 }
 
+function getMoviesInYear(client, year) {
+  const KeyConditionExpression = '#yr = :yyyy'
+
+  const params = {
+    TableName,
+    KeyConditionExpression,
+    ExpressionAttributeNames: {
+      '#yr': 'year',
+    },
+    ExpressionAttributeValues: {
+      ':yyyy': year,
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    client.query(params, function(err, data) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
+
 module.exports = {
   putMovie,
   getMovie,
@@ -153,4 +177,5 @@ module.exports = {
   increateMovieRating,
   removeActor,
   deleteMovieWithCondition,
+  getMoviesInYear,
 }
